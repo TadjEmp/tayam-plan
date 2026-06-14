@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang='fr'>
+<head>
+<meta charset='UTF-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0'>
+<title>Tayam - Planning Familial 2026-2027</title>
+<style>
+:root{
+  --glass:rgba(255,255,255,.62);--glass2:rgba(255,255,255,.84);--line:rgba(148,163,184,.22);
+  --text:#0f172a;--muted:#64748b;
+  --ete:#FFF7D6;--toussaint:#FFE9DC;--noel:#FFE3E3;--hiver:#E5F0FF;--printemps:#E8FAEC;--normal:#F8FAFC;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif;color:var(--text);
+  background:radial-gradient(ellipse at 0% 0%,#dbeafe,transparent 55%),
+  radial-gradient(ellipse at 100% 0%,#ede9fe,transparent 52%),
+  linear-gradient(180deg,#f8fbff,#eef4ff);}
+.wrap{max-width:1300px;margin:24px auto 48px;padding:0 20px;}
+.hero{padding:22px 26px 18px;margin-bottom:18px;background:var(--glass);backdrop-filter:blur(28px) saturate(180%);border:1px solid rgba(255,255,255,.6);border-radius:30px;box-shadow:0 18px 60px rgba(15,23,42,.08),inset 0 1px 0 rgba(255,255,255,.8);}
+.hero h1{font-size:25px;font-weight:900;letter-spacing:-.05em;}
+.hero p{color:var(--muted);font-size:12px;margin-top:4px;}
+.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-top:16px;}
+.kpi{padding:13px 15px;border-radius:20px;background:var(--glass2);border:1px solid var(--line);box-shadow:inset 0 1px 0 rgba(255,255,255,.75);}
+.kpi .lbl{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px;}
+.kpi .val{font-size:20px;font-weight:800;letter-spacing:-.04em;}
+.kpi.dimmed .val{color:var(--muted);font-size:16px;}
+.toolbar{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
+.btn{padding:10px 16px;border-radius:999px;border:1px solid rgba(255,255,255,.6);background:rgba(255,255,255,.7);font-weight:700;font-size:12px;cursor:pointer;box-shadow:0 4px 14px rgba(15,23,42,.06);}
+.btn:hover{background:rgba(255,255,255,.96);}
+.btn-dark{background:linear-gradient(180deg,#1e293b,#0f172a);color:#fff;border-color:transparent;}
+.btn-dark:hover{background:linear-gradient(180deg,#334155,#1e293b);}
+.legend{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.lpill{padding:6px 12px;border-radius:999px;font-size:12px;font-weight:700;border:1px solid rgba(255,255,255,.65);}
+.months{display:flex;flex-direction:column;gap:8px;}
+.month-card{border-radius:22px;border:1px solid var(--line);overflow:hidden;box-shadow:0 3px 16px rgba(15,23,42,.04);}
+.month-summary{display:grid;grid-template-columns:160px 150px 1fr 1fr 1fr 160px 44px;align-items:center;gap:10px;padding:14px 16px;cursor:pointer;background:var(--glass2);}
+.month-summary:hover{background:rgba(255,255,255,.98);}
+.cls-ete .month-summary{background:rgba(255,247,214,.7);}
+.cls-toussaint .month-summary{background:rgba(255,233,220,.65);}
+.cls-noel .month-summary{background:rgba(255,227,227,.62);}
+.cls-hiver .month-summary{background:rgba(229,240,255,.65);}
+.cls-printemps .month-summary{background:rgba(232,250,236,.65);}
+.mname{font-weight:800;font-size:15px;}
+.vpill{padding:6px 11px;border-radius:999px;font-size:11px;font-weight:700;border:1px solid rgba(0,0,0,.06);display:inline-block;}
+.acell{text-align:right;}
+.albl{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px;}
+.aval{font-size:16px;font-weight:800;}
+.cov{padding:6px 10px;border-radius:999px;font-size:11px;font-weight:700;text-align:center;display:inline-block;}
+.cov-ok{background:#dcfce7;color:#166534;}
+.cov-mid{background:#fef3c7;color:#92400e;}
+.cov-low{background:#fee2e2;color:#991b1b;}
+.cov-na{background:#f1f5f9;color:#64748b;}
+.chev{font-size:20px;color:var(--muted);transition:transform .22s;text-align:center;line-height:1;user-select:none;}
+.chev.open{transform:rotate(90deg);}
+.month-detail{display:none;border-top:1px solid var(--line);}
+.month-detail.open{display:block;}
+.cls-ete .month-detail{background:rgba(255,247,214,.35);}
+.cls-toussaint .month-detail{background:rgba(255,233,220,.3);}
+.cls-noel .month-detail{background:rgba(255,227,227,.3);}
+.cls-hiver .month-detail{background:rgba(229,240,255,.35);}
+.cls-printemps .month-detail{background:rgba(232,250,236,.35);}
+.detail-grid{padding:18px 20px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+.dsec{background:rgba(255,255,255,.82);border:1px solid var(--line);border-radius:18px;padding:16px;}
+.dsec h3{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:12px;}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;}
+.field{display:flex;flex-direction:column;gap:4px;}
+.field label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;}
+input[type=number],input[type=date],textarea{width:100%;border:1px solid #dde3ef;background:rgba(255,255,255,.92);border-radius:12px;padding:9px 12px;font-size:13px;font-family:inherit;outline:none;}
+input[type=number]{text-align:right;font-variant-numeric:tabular-nums;}
+input[type=number]:focus,input[type=date]:focus,textarea:focus{border-color:#93c5fd;box-shadow:0 0 0 3px rgba(59,130,246,.1);}
+.trow{background:rgba(241,245,249,.9);border:1px solid var(--line);border-radius:12px;padding:10px 13px;display:flex;justify-content:space-between;align-items:center;margin-top:6px;}
+.trow .tlbl{font-size:11px;font-weight:700;color:var(--muted);}
+.trow .tval{font-size:17px;font-weight:800;}
+.sc-wrap{margin-top:12px;}
+.sc-lbl{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px;}
+.sc-btns{display:flex;gap:6px;margin-bottom:8px;}
+.sc-btn{padding:8px 14px;border-radius:999px;border:1px solid #dde3ef;background:#fff;font-size:12px;font-weight:700;cursor:pointer;}
+.sc-btn.act-a{background:linear-gradient(180deg,#16a34a,#15803d);color:#fff;border-color:transparent;box-shadow:0 5px 14px rgba(22,163,74,.2);}
+.sc-btn.act-b{background:linear-gradient(180deg,#2563eb,#1d4ed8);color:#fff;border-color:transparent;box-shadow:0 5px 14px rgba(37,99,235,.2);}
+.sc-info{font-size:11px;color:var(--muted);line-height:1.5;padding:9px 11px;background:rgba(248,250,252,.9);border-radius:12px;border:1px solid var(--line);}
+.drow{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;}
+.chip{padding:4px 9px;border-radius:999px;font-size:11px;font-weight:700;color:#3730a3;background:#eef2ff;}
+.ref-box{margin-top:12px;padding:11px 13px;background:rgba(241,245,249,.9);border:1px dashed #cbd5e1;border-radius:12px;}
+.ref-box .rlbl{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;}
+.ref-box input{background:rgba(241,245,249,.9);}
+.ref-note{font-size:10px;color:#94a3b8;margin-top:5px;line-height:1.4;}
+textarea{min-height:80px;resize:vertical;}
+
+.reminder-shell{position:fixed;top:28px;right:28px;width:350px;z-index:9999;}
+.reminder-shell.collapsed .reminder-body{display:none;}
+.reminder-shell.panel-mode{position:static;width:auto;margin-bottom:16px;}
+.reminder-card{background:rgba(255,255,255,.78);backdrop-filter:blur(24px) saturate(180%);border:1px solid rgba(255,255,255,.65);border-radius:26px;box-shadow:0 18px 48px rgba(15,23,42,.10),inset 0 1px 0 rgba(255,255,255,.82);overflow:hidden;}
+.reminder-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid rgba(148,163,184,.16);cursor:default;}
+.reminder-title{display:flex;align-items:center;gap:10px;font-weight:800;font-size:14px;letter-spacing:-.02em;}
+.reminder-count{min-width:26px;height:26px;border-radius:999px;background:#ef4444;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;}
+.reminder-actions{display:flex;gap:8px;}
+.rbtn{border:1px solid rgba(255,255,255,.7);background:rgba(255,255,255,.8);border-radius:999px;padding:8px 11px;font-size:12px;font-weight:700;cursor:pointer;}
+.rbtn:hover{background:#fff;}
+.reminder-body{padding:16px 18px;display:flex;flex-direction:column;gap:12px;max-height:75vh;overflow:auto;}
+.reminder-list{display:flex;flex-direction:column;gap:10px;}
+.rem-item{padding:12px 13px;border-radius:18px;border:1px solid rgba(148,163,184,.18);background:rgba(255,255,255,.86);}
+.rem-item.done{opacity:.58;filter:grayscale(.1);}
+.rem-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;}
+.rem-type{padding:5px 9px;border-radius:999px;font-size:11px;font-weight:800;display:inline-block;}
+.rem-auto-urgent{background:#fee2e2;color:#991b1b;}
+.rem-auto-warn{background:#fef3c7;color:#92400e;}
+.rem-manual{background:#dbeafe;color:#1d4ed8;}
+.rem-text{font-size:13px;line-height:1.45;margin-top:8px;color:#0f172a;}
+.rem-date{font-size:11px;color:#64748b;margin-top:6px;}
+.rem-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+.rmini{padding:7px 10px;border-radius:999px;border:1px solid #dbe4ee;background:#fff;font-size:11px;font-weight:700;cursor:pointer;}
+.rem-form{padding:12px;border-radius:18px;background:rgba(248,250,252,.86);border:1px solid rgba(148,163,184,.16);}
+.rem-form .grid{display:grid;grid-template-columns:1fr 130px;gap:8px;margin-top:8px;}
+.rem-form input,.rem-form select{width:100%;border:1px solid #dde3ef;background:#fff;border-radius:12px;padding:9px 11px;font-size:13px;}
+.rem-empty{padding:16px;border-radius:18px;background:rgba(240,253,244,.8);font-size:13px;color:#166534;border:1px solid rgba(34,197,94,.16);}
+@media (max-width: 1440px){ .reminder-shell{right:16px;top:16px;width:320px;} }
+@media print{ .reminder-shell{display:none !important;} }
+
+</style>
+</head>
+<body>
+<div class='wrap'>
+
+<div class='reminder-shell' id='reminderShell'>
+  <div class='reminder-card'>
+    <div class='reminder-head'>
+      <div class='reminder-title'>
+        <span>Rappels</span>
+        <span class='reminder-count' id='reminderCount'>0</span>
+      </div>
+      <div class='reminder-actions'>
+        <button class='rbtn' id='btnDock'>Replier en panneau</button>
+        <button class='rbtn' id='btnCollapseRem'>Masquer</button>
+      </div>
+    </div>
+    <div class='reminder-body' id='reminderBody'>
+      <div class='rem-form'>
+        <strong style='font-size:12px;'>Ajouter un rappel manuel</strong>
+        <div class='grid'>
+          <input type='text' id='manualReminderText' placeholder='Ex : Appeler Maha pour fixer Noel'>
+          <input type='date' id='manualReminderDate'>
+        </div>
+        <div class='rem-row'>
+          <select id='manualReminderType'>
+            <option value='manual'>Rappel manuel</option>
+            <option value='warn'>Rappel prioritaire</option>
+          </select>
+          <button class='rmini' id='btnAddReminder'>Ajouter</button>
+          <button class='rmini' id='btnSidebarMode'>Mode sidebar</button>
+          <button class='rmini' id='btnPanelMode'>Mode panneau</button>
+        </div>
+      </div>
+      <div class='reminder-list' id='reminderList'></div>
+    </div>
+  </div>
+</div>
+
+  <div class='hero'>
+    <h1>Tayam - Planning Familial 2026-2027</h1>
+    <p>Zone C - Aout 2026 a Juillet 2027 - Scenario A = CP accumules Impact - Scenario B = Nouveau poste sept 2026</p>
+    <div class='kpis'>
+      <div class='kpi'><div class='lbl'>Total Tadjidine</div><div class='val' id='kpiYou'>0</div></div>
+      <div class='kpi'><div class='lbl'>Total Maha</div><div class='val' id='kpiMaha'>0</div></div>
+      <div class='kpi'><div class='lbl'>Total familial</div><div class='val' id='kpiFamily'>0</div></div>
+      <div class='kpi'><div class='lbl'>Moyenne / mois (toi)</div><div class='val' id='kpiAvg'>0</div></div>
+      <div class='kpi dimmed'><div class='lbl'>Bloom reel cumule</div><div class='val' id='kpiRef'>0</div></div>
+      <div class='kpi'><div class='lbl'>Couverture vacances</div><div class='val' id='kpiCov'>-</div></div>
+    </div>
+    <div class='toolbar'>
+      <button class='btn btn-dark' id='btn-expand'>Tout ouvrir</button>
+      <button class='btn' id='btn-collapse'>Tout fermer</button>
+      <button class='btn' id='btn-print'>Imprimer / PDF</button>
+      <button class='btn' id='btn-reset'>Reinitialiser</button>
+    </div>
+  </div>
+  
+<div id='reminderPanelHost'></div>
+
+  <div class='legend'>
+    <span class='lpill' style='background:#FFF7D6'>Ete</span>
+    <span class='lpill' style='background:#FFE9DC'>Toussaint</span>
+    <span class='lpill' style='background:#FFE3E3'>Noel</span>
+    <span class='lpill' style='background:#E5F0FF'>Hiver</span>
+    <span class='lpill' style='background:#E8FAEC'>Printemps</span>
+    <span class='lpill cov-ok'>Couvert</span>
+    <span class='lpill cov-mid'>Partiel</span>
+    <span class='lpill cov-low'>Insuffisant</span>
+    <span class='lpill' style='background:#dcfce7;color:#166534'>Sc. A - CP anciennete</span>
+    <span class='lpill' style='background:#dbeafe;color:#1d4ed8'>Sc. B - Nouveau poste</span>
+  </div>
+  <div class='months' id='months'></div>
+</div>
+<script>
+const MONTHS = [{"id": 0, "month": "Aout 2026", "vac": "Ete", "cls": "ete", "holiday": 28, "bloom_ref": 0, "sub_you": 0, "bloom_you": 0, "sub_maha": 0, "bloom_maha": 0}, {"id": 1, "month": "Septembre 2026", "vac": "Rentree", "cls": "normal", "holiday": 0, "bloom_ref": 729.42, "sub_you": 750, "bloom_you": 300, "sub_maha": 0, "bloom_maha": 0}, {"id": 2, "month": "Octobre 2026", "vac": "Toussaint", "cls": "toussaint", "holiday": 16, "bloom_ref": 729.42, "sub_you": 750, "bloom_you": 300, "sub_maha": 0, "bloom_maha": 0}, {"id": 3, "month": "Novembre 2026", "vac": "Aucune", "cls": "normal", "holiday": 0, "bloom_ref": 729.42, "sub_you": 750, "bloom_you": 300, "sub_maha": 0, "bloom_maha": 0}, {"id": 4, "month": "Decembre 2026", "vac": "Noel", "cls": "noel", "holiday": 16, "bloom_ref": 729.42, "sub_you": 750, "bloom_you": 300, "sub_maha": 0, "bloom_maha": 0}, {"id": 5, "month": "Janvier 2027", "vac": "Noel", "cls": "noel", "holiday": 4, "bloom_ref": 729.42, "sub_you": 750, "bloom_you": 300, "sub_maha": 0, "bloom_maha": 0}, {"id": 6, "month": "Fevrier 2027", "vac": "Hiver + Stage Bloom", "cls": "hiver", "holiday": 16, "bloom_ref": 729.42, "sub_you": 750, "bloom_you": 300, "sub_maha": 0, "bloom_maha": 0}, {"id": 7, "month": "Mars 2027", "vac": "Aucune", "cls": "normal", "holiday": 0, "bloom_ref": 729.42, "sub_you": 750, "bloom_you": 300, "sub_maha": 0, "bloom_maha": 0}, {"id": 8, "month": "Avril 2027", "vac": "Printemps", "cls": "printemps", "holiday": 16, "bloom_ref": 729.42, "sub_you": 750, "bloom_you": 300, "sub_maha": 0, "bloom_maha": 0}, {"id": 9, "month": "Mai 2027", "vac": "Aucune", "cls": "normal", "holiday": 0, "bloom_ref": 729.42, "sub_you": 750, "bloom_you": 300, "sub_maha": 0, "bloom_maha": 0}, {"id": 10, "month": "Juin 2027", "vac": "Aucune", "cls": "normal", "holiday": 0, "bloom_ref": 729.42, "sub_you": 750, "bloom_you": 300, "sub_maha": 0, "bloom_maha": 0}, {"id": 11, "month": "Juillet 2027", "vac": "Ete + Stages Bloom", "cls": "ete", "holiday": 29, "bloom_ref": 729.42, "sub_you": 750, "bloom_you": 300, "sub_maha": 0, "bloom_maha": 0}];
+
+const SC = {
+  A: "Scenario A : CP accumules chez Impact Sales Marketing. Anciennete conservee. Davantage de jours disponibles des le depart.",
+  B: "Scenario B : Nouveau poste pris en septembre 2026. Compteur CP remis a zero. Acquisition progressive : 2,08 jours par mois travaille."
+};
+
+const state = [];
+let openCards = {};
+
+function initState() {
+  MONTHS.forEach(function(m, i) {
+    state[i] = {
+      sub_you: m.sub_you, bloom_you: m.bloom_you, tayam_you: 0,
+      sub_maha: m.sub_maha, bloom_maha: m.bloom_maha, tayam_maha: 0,
+      bloom_ref: m.bloom_ref,
+      sc_you: "B", sc_maha: "A",
+      days_a_you: 0, days_b_you: 0,
+      days_a_maha: 0, days_b_maha: 0,
+      start_you: "", end_you: "",
+      start_maha: "", end_maha: "",
+      notes: ""
+    };
+  });
+}
+
+function euro(v) {
+  return new Intl.NumberFormat("fr-FR", {style:"currency", currency:"EUR", maximumFractionDigits:0}).format(+v || 0);
+}
+function euroFull(v) {
+  return new Intl.NumberFormat("fr-FR", {style:"currency", currency:"EUR", minimumFractionDigits:2}).format(+v || 0);
+}
+function fmtDate(v) {
+  if (!v) return "";
+  var d = new Date(v + "T00:00:00");
+  return d.toLocaleDateString("fr-FR", {day:"2-digit", month:"2-digit"});
+}
+
+function covHtml(covered, total) {
+  if (!total) return '<span class="cov cov-na">Hors vacances</span>';
+  if (covered >= total) return '<span class="cov cov-ok">Couvert ' + covered + "/" + total + " j</span>";
+  if (covered >= total / 2) return '<span class="cov cov-mid">Partiel ' + covered + "/" + total + " j</span>";
+  return '<span class="cov cov-low">Insuffisant ' + covered + "/" + total + " j</span>";
+}
+
+function renderAll() {
+  var container = document.getElementById("months");
+  var html = "";
+  MONTHS.forEach(function(m, i) {
+    var s = state[i];
+    var totalYou = (s.sub_you||0)+(s.bloom_you||0)+(s.tayam_you||0);
+    var totalMaha = (s.sub_maha||0)+(s.bloom_maha||0)+(s.tayam_maha||0);
+    var totalFam = totalYou + totalMaha;
+    var dY = s.sc_you==="A" ? (s.days_a_you||0) : (s.days_b_you||0);
+    var dM = s.sc_maha==="A" ? (s.days_a_maha||0) : (s.days_b_maha||0);
+    var covered = dY + dM;
+    var isOpen = !!openCards[i];
+    var vpillBg = {ete:"#FFF7D6",toussaint:"#FFE9DC",noel:"#FFE3E3",hiver:"#E5F0FF",printemps:"#E8FAEC",normal:"#F1F5F9"}[m.cls] || "#F1F5F9";
+
+    var chipsYou = "";
+    if (s.start_you) chipsYou += '<span class="chip">Du ' + fmtDate(s.start_you) + "</span>";
+    if (s.end_you) chipsYou += '<span class="chip">Au ' + fmtDate(s.end_you) + "</span>";
+    var chipsMaha = "";
+    if (s.start_maha) chipsMaha += '<span class="chip">Du ' + fmtDate(s.start_maha) + "</span>";
+    if (s.end_maha) chipsMaha += '<span class="chip">Au ' + fmtDate(s.end_maha) + "</span>";
+
+    html += '<div class="month-card cls-' + m.cls + '" id="card-' + i + '">';
+    html += '<div class="month-summary" data-toggle="' + i + '">';
+    html += '<div class="mname">' + m.month + "</div>";
+    html += '<div><span class="vpill" style="background:' + vpillBg + '">' + m.vac + "</span></div>";
+    html += '<div class="acell"><div class="albl">Tadjidine</div><div class="aval">' + euro(totalYou) + "</div></div>";
+    html += '<div class="acell"><div class="albl">Maha</div><div class="aval">' + euro(totalMaha) + "</div></div>";
+    html += '<div class="acell"><div class="albl">Familial</div><div class="aval">' + euro(totalFam) + "</div></div>";
+    html += "<div>" + covHtml(covered, m.holiday) + "</div>";
+    html += '<div class="chev' + (isOpen ? " open" : "") + '">&#8250;</div>';
+    html += "</div>";
+
+    html += '<div class="month-detail' + (isOpen ? " open" : "") + '" id="detail-' + i + '">';
+    html += '<div class="detail-grid">';
+
+    // Bloc Tadjidine
+    html += '<div class="dsec"><h3>Tadjidine</h3>';
+    html += '<div class="frow">';
+    html += '<div class="field"><label>Subsistance</label><input type="number" step="0.01" value="' + (s.sub_you||0) + '" data-idx="' + i + '" data-key="sub_you"></div>';
+    html += '<div class="field"><label>Bloom School</label><input type="number" step="0.01" value="' + (s.bloom_you||0) + '" data-idx="' + i + '" data-key="bloom_you"></div>';
+    html += "</div>";
+    html += '<div class="field"><label>Contribution vacances Tayam</label><input type="number" step="0.01" value="' + (s.tayam_you||0) + '" data-idx="' + i + '" data-key="tayam_you"></div>';
+    html += '<div class="trow"><span class="tlbl">Total mensuel</span><span class="tval" id="tyou-' + i + '">' + euro(totalYou) + "</span></div>";
+    html += '<div class="sc-wrap"><div class="sc-lbl">Scenario conges</div>';
+    html += '<div class="sc-btns">';
+    html += '<button class="sc-btn' + (s.sc_you==="A" ? " act-a" : "") + '" data-sc-idx="' + i + '" data-sc-person="you" data-sc-val="A">Scenario A</button>';
+    html += '<button class="sc-btn' + (s.sc_you==="B" ? " act-b" : "") + '" data-sc-idx="' + i + '" data-sc-person="you" data-sc-val="B">Scenario B</button>';
+    html += "</div>";
+    html += '<div class="sc-info">' + SC[s.sc_you] + "</div></div>";
+    html += '<div class="drow">';
+    html += '<div class="field"><label>Jours Sc. A</label><input type="number" min="0" step="1" value="' + (s.days_a_you||0) + '" data-idx="' + i + '" data-key="days_a_you"></div>';
+    html += '<div class="field"><label>Jours Sc. B</label><input type="number" min="0" step="1" value="' + (s.days_b_you||0) + '" data-idx="' + i + '" data-key="days_b_you"></div>';
+    html += "</div>";
+    html += '<div class="drow">';
+    html += '<div class="field"><label>Debut conge</label><input type="date" value="' + (s.start_you||"") + '" data-idx="' + i + '" data-key="start_you"></div>';
+    html += '<div class="field"><label>Fin conge</label><input type="date" value="' + (s.end_you||"") + '" data-idx="' + i + '" data-key="end_you"></div>';
+    html += "</div>";
+    if (chipsYou) html += '<div class="chips">' + chipsYou + "</div>";
+    html += "</div>";
+
+    // Bloc Maha
+    html += '<div class="dsec"><h3>Maha</h3>';
+    html += '<div class="frow">';
+    html += '<div class="field"><label>Subsistance</label><input type="number" step="0.01" value="' + (s.sub_maha||0) + '" data-idx="' + i + '" data-key="sub_maha"></div>';
+    html += '<div class="field"><label>Bloom School</label><input type="number" step="0.01" value="' + (s.bloom_maha||0) + '" data-idx="' + i + '" data-key="bloom_maha"></div>';
+    html += "</div>";
+    html += '<div class="field"><label>Contribution vacances Tayam</label><input type="number" step="0.01" value="' + (s.tayam_maha||0) + '" data-idx="' + i + '" data-key="tayam_maha"></div>';
+    html += '<div class="trow"><span class="tlbl">Total mensuel</span><span class="tval" id="tmaha-' + i + '">' + euro(totalMaha) + "</span></div>";
+    html += '<div class="sc-wrap"><div class="sc-lbl">Scenario conges</div>';
+    html += '<div class="sc-btns">';
+    html += '<button class="sc-btn' + (s.sc_maha==="A" ? " act-a" : "") + '" data-sc-idx="' + i + '" data-sc-person="maha" data-sc-val="A">Scenario A</button>';
+    html += '<button class="sc-btn' + (s.sc_maha==="B" ? " act-b" : "") + '" data-sc-idx="' + i + '" data-sc-person="maha" data-sc-val="B">Scenario B</button>';
+    html += "</div>";
+    html += '<div class="sc-info">' + SC[s.sc_maha] + "</div></div>";
+    html += '<div class="drow">';
+    html += '<div class="field"><label>Jours Sc. A</label><input type="number" min="0" step="1" value="' + (s.days_a_maha||0) + '" data-idx="' + i + '" data-key="days_a_maha"></div>';
+    html += '<div class="field"><label>Jours Sc. B</label><input type="number" min="0" step="1" value="' + (s.days_b_maha||0) + '" data-idx="' + i + '" data-key="days_b_maha"></div>';
+    html += "</div>";
+    html += '<div class="drow">';
+    html += '<div class="field"><label>Debut conge</label><input type="date" value="' + (s.start_maha||"") + '" data-idx="' + i + '" data-key="start_maha"></div>';
+    html += '<div class="field"><label>Fin conge</label><input type="date" value="' + (s.end_maha||"") + '" data-idx="' + i + '" data-key="end_maha"></div>';
+    html += "</div>";
+    if (chipsMaha) html += '<div class="chips">' + chipsMaha + "</div>";
+    html += "</div>";
+
+    // Bloc Notes + Bloom ref
+    html += '<div class="dsec"><h3>Notes et Reference</h3>';
+    html += '<div class="field"><label>Notes communes</label><textarea data-idx="' + i + '" data-key="notes">' + (s.notes||"") + "</textarea></div>";
+    html += '<div class="ref-box"><div class="rlbl">Bloom reel - Indice reference</div>';
+    html += '<input type="number" step="0.01" value="' + (s.bloom_ref||0) + '" data-idx="' + i + '" data-key="bloom_ref">';
+    html += '<div class="ref-note">Cout total paye a deux apres credit impot (729,42 EUR). Non comptabilise dans vos charges.</div>';
+    html += "</div></div>";
+
+    html += "</div></div></div>";
+  });
+  container.innerHTML = html;
+  bindEvents();
+  recalc();
+  renderReminders();
+}
+
+function bindEvents() {
+  // Toggle accordeon
+  document.querySelectorAll("[data-toggle]").forEach(function(el) {
+    el.addEventListener("click", function() {
+      var i = +this.getAttribute("data-toggle");
+      openCards[i] = !openCards[i];
+      renderAll();
+    });
+  });
+  // Inputs numeriques
+  document.querySelectorAll("input[data-key]").forEach(function(el) {
+    el.addEventListener("input", function() {
+      var i = +this.getAttribute("data-idx");
+      var k = this.getAttribute("data-key");
+      var v = this.type === "date" ? this.value : (parseFloat(this.value) || 0);
+      state[i][k] = v;
+      recalc();
+    });
+    el.addEventListener("change", function() {
+      var i = +this.getAttribute("data-idx");
+      var k = this.getAttribute("data-key");
+      if (this.type === "date") { state[i][k] = this.value; renderAll(); }
+    });
+  });
+  // Textarea
+  document.querySelectorAll("textarea[data-key]").forEach(function(el) {
+    el.addEventListener("input", function() {
+      var i = +this.getAttribute("data-idx");
+      var k = this.getAttribute("data-key");
+      state[i][k] = this.value;
+    });
+  });
+  // Scenario buttons
+  document.querySelectorAll("[data-sc-idx]").forEach(function(el) {
+    el.addEventListener("click", function(e) {
+      e.stopPropagation();
+      var i = +this.getAttribute("data-sc-idx");
+      var person = this.getAttribute("data-sc-person");
+      var val = this.getAttribute("data-sc-val");
+      if (person === "you") state[i].sc_you = val;
+      else state[i].sc_maha = val;
+      renderAll();
+    });
+  });
+}
+
+function recalc() {
+  var tY=0, tM=0, tF=0, tR=0, covCov=0, covNeed=0, covOk=0, covTotal=0, active=0;
+  MONTHS.forEach(function(m, i) {
+    var s = state[i];
+    var you = (s.sub_you||0)+(s.bloom_you||0)+(s.tayam_you||0);
+    var maha = (s.sub_maha||0)+(s.bloom_maha||0)+(s.tayam_maha||0);
+    if (i > 0) { tY+=you; tM+=maha; tF+=(you+maha); tR+=(s.bloom_ref||0); active++; }
+    if (m.holiday > 0) {
+      var dY = s.sc_you==="A"?(s.days_a_you||0):(s.days_b_you||0);
+      var dM = s.sc_maha==="A"?(s.days_a_maha||0):(s.days_b_maha||0);
+      covCov += dY+dM; covNeed += m.holiday; covTotal++;
+      if (dY+dM >= m.holiday) covOk++;
+    }
+    var cy = document.getElementById("tyou-"+i); if(cy) cy.textContent = new Intl.NumberFormat("fr-FR",{style:"currency",currency:"EUR",maximumFractionDigits:0}).format(you);
+    var cm = document.getElementById("tmaha-"+i); if(cm) cm.textContent = new Intl.NumberFormat("fr-FR",{style:"currency",currency:"EUR",maximumFractionDigits:0}).format(maha);
+  });
+  var ef = function(v){ return new Intl.NumberFormat("fr-FR",{style:"currency",currency:"EUR",maximumFractionDigits:0}).format(v); };
+  document.getElementById("kpiYou").textContent = ef(tY);
+  document.getElementById("kpiMaha").textContent = ef(tM);
+  document.getElementById("kpiFamily").textContent = ef(tF);
+  document.getElementById("kpiAvg").textContent = active ? ef(tY/active) : "0 EUR";
+  document.getElementById("kpiRef").textContent = new Intl.NumberFormat("fr-FR",{style:"currency",currency:"EUR",minimumFractionDigits:2}).format(tR);
+  document.getElementById("kpiCov").textContent = covTotal ? (covOk+"/"+covTotal+" mois") : "-";
+}
+
+document.getElementById("btn-expand").addEventListener("click", function(){ MONTHS.forEach(function(_,i){ openCards[i]=true; }); renderAll(); });
+document.getElementById("btn-collapse").addEventListener("click", function(){ openCards={}; renderAll(); });
+document.getElementById("btn-print").addEventListener("click", function(){ window.print(); });
+document.getElementById("btn-reset").addEventListener("click", function(){ initState(); openCards={}; renderAll(); });
+
+
+const reminders = { manual: [] };
+let reminderMode = 'sidebar';
+let reminderCollapsed = false;
+
+function getAutoReminders() {
+  const items = [];
+  MONTHS.forEach(function(m, i) {
+    const s = state[i];
+    if (i > 0) {
+      if ((s.sub_you || 0) === 0) {
+        items.push({ id:'fin-you-' + i, type:'warn', auto:true, text:m.month + ' - Frais de subsistance Tadjidine non renseignes', date:'' });
+      }
+      if ((s.bloom_you || 0) === 0) {
+        items.push({ id:'bloom-you-' + i, type:'warn', auto:true, text:m.month + ' - Participation Bloom Tadjidine non renseignee', date:'' });
+      }
+    }
+    if (m.holiday > 0) {
+      const dY = s.sc_you === 'A' ? (s.days_a_you || 0) : (s.days_b_you || 0);
+      const dM = s.sc_maha === 'A' ? (s.days_a_maha || 0) : (s.days_b_maha || 0);
+      if ((dY + dM) === 0) {
+        items.push({ id:'vac-' + i, type:'urgent', auto:true, text:m.month + ' - Vacances : aucun jour pose dans les scenarios actifs', date:'' });
+      } else if ((dY + dM) < m.holiday) {
+        items.push({ id:'vac-partial-' + i, type:'warn', auto:true, text:m.month + ' - Couverture vacances partielle (' + (dY + dM) + '/' + m.holiday + ' j)', date:'' });
+      }
+    }
+  });
+  return items;
+}
+
+function allReminders() {
+  return getAutoReminders().concat(reminders.manual);
+}
+
+function reminderBadgeClass(type) {
+  if (type === 'urgent') return 'rem-type rem-auto-urgent';
+  if (type === 'warn') return 'rem-type rem-auto-warn';
+  return 'rem-type rem-manual';
+}
+
+function reminderLabel(type, auto) {
+  if (auto && type === 'urgent') return 'Alerte auto';
+  if (auto && type === 'warn') return 'Rappel auto';
+  if (type === 'warn') return 'Prioritaire';
+  return 'Manuel';
+}
+
+function renderReminders() {
+  const shell = document.getElementById('reminderShell');
+  const host = document.getElementById('reminderPanelHost');
+  const list = document.getElementById('reminderList');
+  const count = document.getElementById('reminderCount');
+  if (!shell || !list || !count) return;
+
+  shell.classList.toggle('collapsed', reminderCollapsed);
+  shell.classList.toggle('panel-mode', reminderMode === 'panel');
+  if (reminderMode === 'panel') {
+    host.appendChild(shell);
+  } else {
+    document.querySelector('.wrap').prepend(shell);
+  }
+
+  const items = allReminders();
+  const openItems = items.filter(function(x){ return !x.done; });
+  count.textContent = openItems.length;
+
+  if (!items.length) {
+    list.innerHTML = '<div class="rem-empty">Aucun rappel actif pour le moment.</div>';
+    return;
+  }
+
+  list.innerHTML = items.map(function(item){
+    return '<div class="rem-item ' + (item.done ? 'done' : '') + '">'
+      + '<div class="rem-top">'
+      + '<span class="' + reminderBadgeClass(item.type) + '">' + reminderLabel(item.type, item.auto) + '</span>'
+      + '<div class="rem-row">'
+      + (item.auto ? '' : '<button class="rmini" data-rem-done="' + item.id + '">' + (item.done ? 'Retablir' : 'Traite') + '</button>')
+      + (item.auto ? '' : '<button class="rmini" data-rem-del="' + item.id + '">Supprimer</button>')
+      + '</div>'
+      + '</div>'
+      + '<div class="rem-text">' + item.text + '</div>'
+      + (item.date ? '<div class="rem-date">Echeance : ' + item.date + '</div>' : '')
+      + '</div>';
+  }).join('');
+
+  document.querySelectorAll('[data-rem-done]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      const id = this.getAttribute('data-rem-done');
+      reminders.manual = reminders.manual.map(function(r){
+        if (r.id === id) r.done = !r.done;
+        return r;
+      });
+      renderReminders();
+    });
+  });
+  document.querySelectorAll('[data-rem-del]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      const id = this.getAttribute('data-rem-del');
+      reminders.manual = reminders.manual.filter(function(r){ return r.id !== id; });
+      renderReminders();
+    });
+  });
+}
+
+function bindReminderButtons() {
+  document.getElementById('btnAddReminder').addEventListener('click', function(){
+    const text = document.getElementById('manualReminderText').value.trim();
+    const date = document.getElementById('manualReminderDate').value;
+    const type = document.getElementById('manualReminderType').value;
+    if (!text) return;
+    reminders.manual.push({ id:'man-' + Date.now(), text:text, date:date, type:type, auto:false, done:false });
+    document.getElementById('manualReminderText').value = '';
+    document.getElementById('manualReminderDate').value = '';
+    renderReminders();
+  });
+  document.getElementById('btnSidebarMode').addEventListener('click', function(){ reminderMode = 'sidebar'; reminderCollapsed = false; renderReminders(); });
+  document.getElementById('btnPanelMode').addEventListener('click', function(){ reminderMode = 'panel'; reminderCollapsed = false; renderReminders(); });
+  document.getElementById('btnDock').addEventListener('click', function(){
+    reminderMode = reminderMode === 'sidebar' ? 'panel' : 'sidebar';
+    reminderCollapsed = false;
+    renderReminders();
+  });
+  document.getElementById('btnCollapseRem').addEventListener('click', function(){
+    reminderCollapsed = !reminderCollapsed;
+    this.textContent = reminderCollapsed ? 'Afficher' : 'Masquer';
+    renderReminders();
+  });
+}
+
+initState();
+renderAll();
+bindReminderButtons();
+renderReminders();
+</script>
+</body>
+</html>
